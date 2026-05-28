@@ -1,5 +1,25 @@
 # 美股量化研究平台 / Stocks Analysis Platform
 
+[![Python](https://img.shields.io/badge/Python-3.12-blue?logo=python&logoColor=white)](https://www.python.org/)
+[![Node.js](https://img.shields.io/badge/Node.js-22-339933?logo=nodedotjs&logoColor=white)](https://nodejs.org/)
+[![FastAPI](https://img.shields.io/badge/FastAPI-0.115%2B-009688?logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
+[![Pydantic](https://img.shields.io/badge/Pydantic-2.10%2B-e92063?logo=pydantic&logoColor=white)](https://docs.pydantic.dev/)
+[![Pandas](https://img.shields.io/badge/Pandas-2.2%2B-150458?logo=pandas&logoColor=white)](https://pandas.pydata.org/)
+[![NumPy](https://img.shields.io/badge/NumPy-1.26%2B-013243?logo=numpy&logoColor=white)](https://numpy.org/)
+[![Vue](https://img.shields.io/badge/Vue-3.5-42b883?logo=vuedotjs&logoColor=white)](https://vuejs.org/)
+[![Vite](https://img.shields.io/badge/Vite-6.0-646cff?logo=vite&logoColor=white)](https://vite.dev/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.6-3178c6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![ECharts](https://img.shields.io/badge/ECharts-5.5-aa344d?logo=apacheecharts&logoColor=white)](https://echarts.apache.org/)
+[![Docker](https://img.shields.io/badge/Docker-Compose-2496ed?logo=docker&logoColor=white)](https://docs.docker.com/compose/)
+[![MySQL](https://img.shields.io/badge/MySQL-8.0-4479a1?logo=mysql&logoColor=white)](https://www.mysql.com/)
+[![Redis](https://img.shields.io/badge/Redis-7-dc382d?logo=redis&logoColor=white)](https://redis.io/)
+[![Celery](https://img.shields.io/badge/Celery-5.4-37814a)](https://docs.celeryq.dev/)
+[![OpenTelemetry](https://img.shields.io/badge/OpenTelemetry-1.27%2B-000000?logo=opentelemetry&logoColor=white)](https://opentelemetry.io/)
+[![Prometheus](https://img.shields.io/badge/Prometheus-2.54-e6522c?logo=prometheus&logoColor=white)](https://prometheus.io/)
+[![Jaeger](https://img.shields.io/badge/Jaeger-1.57-66cfe3)](https://www.jaegertracing.io/)
+[![CI](https://github.com/Totoro-qaq/stocks-analysis/actions/workflows/ci.yml/badge.svg)](https://github.com/Totoro-qaq/stocks-analysis/actions/workflows/ci.yml)
+[![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+
 一个可复现的美股科技股量化研究平台，覆盖数据抓取、指标计算、组合优化、Walk-forward 验证、统计检验、人工规则干预、AI 辅助报告，以及 Vue + FastAPI 可视化看板。
 
 A reproducible US stock quantitative research platform covering data ingestion, analytics, portfolio optimization, walk-forward validation, statistical testing, human rule overlays, AI-assisted reporting, and a Vue + FastAPI dashboard.
