@@ -1,21 +1,22 @@
-# Stocks Analysis Platform
+# 美股量化研究平台 / Stocks Analysis Platform
 
-A reproducible US stock quantitative research platform for a 50-stock technology universe. It combines market data ingestion, portfolio analytics, walk-forward validation, statistical testing, human rule overlays, AI-assisted report generation, and a Vue/FastAPI web dashboard.
+一个可复现的美股科技股量化研究平台，覆盖数据抓取、指标计算、组合优化、Walk-forward 验证、统计检验、人工规则干预、AI 辅助报告，以及 Vue + FastAPI 可视化看板。
 
-## Features
+A reproducible US stock quantitative research platform covering data ingestion, analytics, portfolio optimization, walk-forward validation, statistical testing, human rule overlays, AI-assisted reporting, and a Vue + FastAPI dashboard.
 
-- Market data ingestion from Yahoo Finance chart APIs.
-- Research universe construction from XLK-related technology equities.
-- Single-stock metrics, cumulative returns, Bollinger bands, and correlation matrices.
-- Mean-variance portfolio optimization and efficient frontier generation.
-- Walk-forward validation with rolling train/test windows.
-- Statistical tests and bootstrap confidence intervals.
-- Human rule overlays for exclusions, caps, floors, boosts, penalties, and notes.
-- FastAPI backend, Celery worker, Redis, MySQL, OpenTelemetry, Jaeger, Prometheus, and Vue frontend.
-- Optional DeepSeek-compatible report generation and Dify workflow integration.
-- Data-provider-safe repository hygiene: downloaded datasets, generated outputs, and demo recordings are excluded from git.
+## 功能特性 / Features
 
-## Architecture
+- Yahoo Finance chart API 行情抓取与本地 CSV/MySQL 存储。
+- 基于 XLK 相关科技股构建 50 股研究池。
+- 单股风险收益、累计收益、布林带、相关性矩阵。
+- 均值-方差组合优化、有效前沿、HRP、Black-Litterman、因子分析扩展。
+- Walk-forward 样本外验证、t 检验、bootstrap 区间。
+- 人工规则覆盖：排除、上限、下限、收益增强、风险惩罚、备注。
+- FastAPI、Celery、Redis、MySQL、OpenTelemetry、Jaeger、Prometheus、Vue 前端。
+- 可选 DeepSeek/OpenAI-compatible 报告生成与 Dify Workflow 集成。
+- 仓库不提交下载行情、ETF 持仓、派生输出、日志或演示录屏，降低数据授权风险。
+
+## 架构 / Architecture
 
 ```text
 Market data -> CSV/MySQL -> Analytics -> Portfolio optimization
@@ -23,13 +24,13 @@ Market data -> CSV/MySQL -> Analytics -> Portfolio optimization
             -> FastAPI/Celery -> Vue dashboard -> Report output
 ```
 
-## Repository Layout
+## 目录结构 / Repository Layout
 
 ```text
 backend/              FastAPI routers, services, Celery integration
 frontend/             Vue 3 + Vite dashboard
 src/                  Data ingestion and quantitative analysis scripts
-data/                 Local research datasets and generated sample outputs
+data/                 Local-only datasets and generated outputs
 config/               Environment templates and observability config
 docs/                 Design notes, data dictionary, and project plans
 scripts/              Demo recording and utility scripts
@@ -37,13 +38,15 @@ nginx/                Frontend container nginx config
 docker-compose.yml    Full local stack
 ```
 
-## Requirements
+## 环境要求 / Requirements
 
-- Python 3.12+ recommended.
-- Node.js 20+ or 22+.
-- Docker Desktop with Docker Compose for the full stack.
+- Python 3.12+
+- Node.js 20+ 或 22+
+- Docker Desktop + Docker Compose
 
-## Configuration
+## 配置 / Configuration
+
+复制环境变量模板并填入本地密钥：
 
 Copy the environment template and fill local secrets:
 
@@ -51,7 +54,7 @@ Copy the environment template and fill local secrets:
 Copy-Item config/.env.example config/.env
 ```
 
-Important variables:
+关键变量 / Important variables:
 
 ```text
 MYSQL_HOST=127.0.0.1
@@ -71,15 +74,19 @@ DIFY_RULES_API_KEY=
 DIFY_USER=stocks-analysis-local
 ```
 
-Do not commit `config/.env`.
+不要提交 `config/.env`。
 
-## Data and Redistribution Notice
+Never commit `config/.env`.
 
-Downloaded market data, ETF holdings, generated analytics, local reports, logs, and demo recordings are not committed. See [docs/DATA_NOTICE.md](docs/DATA_NOTICE.md) for the exclusion policy and regeneration commands.
+## 数据与授权说明 / Data and Redistribution Notice
 
-## Local Development
+本仓库不提交下载行情、ETF 持仓、派生分析输出、本地报告、日志或演示录屏。详见 [docs/DATA_NOTICE.md](docs/DATA_NOTICE.md)。
 
-Install backend dependencies:
+Downloaded market data, ETF holdings, generated analytics, local reports, logs, and demo recordings are not committed. See [docs/DATA_NOTICE.md](docs/DATA_NOTICE.md).
+
+## 本地开发 / Local Development
+
+后端依赖 / Backend dependencies:
 
 ```powershell
 python -m venv .venv
@@ -87,7 +94,7 @@ python -m venv .venv
 pip install -r backend/requirements.txt
 ```
 
-Install frontend dependencies:
+前端依赖 / Frontend dependencies:
 
 ```powershell
 cd frontend
@@ -95,29 +102,33 @@ npm ci
 cd ..
 ```
 
-Run only the frontend:
+启动本地前后端 / Run local backend and frontend:
 
 ```powershell
+python -m uvicorn backend.main:app --host 127.0.0.1 --port 18000
 cd frontend
 npm run dev
 ```
 
-Run the full Docker stack:
+启动完整 Docker 栈 / Run the full Docker stack:
 
 ```powershell
 docker compose up -d --build
 ```
 
-Default service URLs:
+默认地址 / Default URLs:
 
-- Frontend: `http://localhost:18080`
+- Frontend dev: `http://localhost:5173`
+- Frontend Docker: `http://localhost:18080`
 - Backend health: `http://localhost:18000/api/health`
 - Jaeger: `http://localhost:16686`
 - Prometheus: `http://localhost:19090`
 
-## Analysis Scripts
+## 分析脚本 / Analysis Scripts
 
-Run from the project root.
+在项目根目录运行：
+
+Run from the project root:
 
 ```powershell
 python src/fetch_market_data.py --summary-only
@@ -128,28 +139,36 @@ python src/walk_forward.py
 python src/stat_tests.py --samples 2000 --block-size 21
 ```
 
-Generated outputs are written under `data/output/`.
+输出会生成到 `data/output/`，但不会进入 Git。
 
-## Verification
+Generated outputs are written under `data/output/`, but are excluded from Git.
 
-Backend syntax and import checks:
+## 验证 / Verification
 
 ```powershell
 python -m compileall backend src
 python -c "import backend.main; print(backend.main.app.title)"
-```
-
-Frontend build:
-
-```powershell
 cd frontend
 npm run build
+docker compose config
 ```
 
-## Security
+## 分支策略 / Branch Strategy
 
-This project can connect to third-party APIs and local databases. Keep `.env` files private, rotate exposed API keys immediately, and report security issues privately according to [SECURITY.md](SECURITY.md).
+- `main`：稳定分支，默认分支。
+- `totoro_develop`：日常开发分支。
+- 依赖更新、功能开发和文档调整优先进入 `totoro_develop`，再通过 PR 合并到 `main`。
 
-## License
+- `main`: stable default branch.
+- `totoro_develop`: daily development branch.
+- Dependency updates, features, and documentation changes should land on `totoro_develop` first and then merge into `main` via PR.
+
+## 安全 / Security
+
+本项目会连接第三方 API 和本地数据库。请保护 `.env` 文件，密钥泄露后立即轮换，并按 [SECURITY.md](SECURITY.md) 私下报告安全问题。
+
+This project can connect to third-party APIs and local databases. Keep `.env` files private, rotate exposed keys immediately, and report security issues privately according to [SECURITY.md](SECURITY.md).
+
+## 许可证 / License
 
 MIT License. See [LICENSE](LICENSE).
