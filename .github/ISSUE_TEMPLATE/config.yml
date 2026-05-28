@@ -1,0 +1,5 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Security issue
+    url: mailto:626836554@qq.com
+    about: Please report vulnerabilities privately instead of opening a public issue.

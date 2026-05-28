@@ -1,0 +1,145 @@
+/* ── TradingView / Finviz 风格全局设计系统 ── */
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ── CSS 变量 (Light Mode 首选) ── */
+:root {
+  --tv-bg-primary: #ffffff;
+  --tv-bg-secondary: #f5f7fb;
+  --tv-bg-card: #ffffff;
+  --tv-bg-hover: #eef4ff;
+  --tv-border: #dce3ee;
+  --tv-border-strong: #cfd8e6;
+  --tv-text-primary: #1f2937;
+  --tv-text-secondary: #606266;
+  --tv-text-muted: #909399;
+  --tv-accent: #409eff;
+  --tv-accent-hover: #337ecc;
+  --tv-accent-soft: rgba(64, 158, 255, 0.12);
+  --tv-green: #10b981;
+  --tv-green-bg: rgba(16, 185, 129, 0.12);
+  --tv-red: #f56c6c;
+  --tv-red-bg: rgba(245, 108, 108, 0.13);
+  --tv-yellow: #e6a23c;
+  --tv-yellow-bg: rgba(230, 162, 60, 0.14);
+  --tv-purple: #8b5cf6;
+  --tv-purple-hover: #7c3aed;
+  --tv-shadow-color: rgba(15, 23, 42, 0.07);
+  --motion-duration-fast: 0.2s;
+  --motion-duration-base: 0.28s;
+  --motion-ease: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* ── 基础重置 ── */
+body {
+  margin: 0;
+  background: var(--tv-bg-secondary); /* 将主背景设为一点点灰色，让白色卡片更突出 */
+  color: var(--tv-text-primary);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  font-size: 14px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* 全局卡片样式提升空间感 */
+.panel-card {
+  background: var(--tv-bg-card);
+  border: 1px solid var(--tv-border);
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+  transition:
+    border-color var(--motion-duration-base) var(--motion-ease),
+    box-shadow var(--motion-duration-base) var(--motion-ease),
+    transform var(--motion-duration-base) var(--motion-ease);
+}
+
+.panel-card:hover {
+  border-color: var(--tv-border-strong);
+  box-shadow: 0 10px 28px var(--tv-shadow-color);
+  transform: translateY(-2px);
+}
+
+.route-view {
+  min-width: 0;
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity var(--motion-duration-base) var(--motion-ease);
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+
+.fade-transform-enter-active,
+.fade-transform-leave-active {
+  transition:
+    opacity var(--motion-duration-base) var(--motion-ease),
+    transform var(--motion-duration-base) var(--motion-ease);
+}
+
+.fade-transform-enter-from {
+  opacity: 0;
+  transform: translateX(-18px);
+}
+
+.fade-transform-leave-to {
+  opacity: 0;
+  transform: translateX(18px);
+}
+
+.breadcrumb-enter-active,
+.breadcrumb-leave-active {
+  transition:
+    opacity var(--motion-duration-fast) var(--motion-ease),
+    transform var(--motion-duration-fast) var(--motion-ease);
+}
+
+.breadcrumb-enter-from,
+.breadcrumb-leave-to {
+  opacity: 0;
+  transform: translateX(16px);
+}
+
+/* ── 滚动条 (TradingView 风格) ── */
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: var(--tv-bg-primary); }
+::-webkit-scrollbar-thumb { background: var(--tv-bg-hover); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--tv-text-muted); }
+::-webkit-scrollbar-corner { background: var(--tv-bg-primary); }
+
+/* ── 数字等宽 ── */
+.num { font-variant-numeric: tabular-nums; font-family: 'SF Mono', 'Cascadia Code', 'Consolas', monospace; }
+
+/* ── 红绿色标 ── */
+.positive { color: var(--tv-green); }
+.negative { color: var(--tv-red); }
+.positive-bg { background: var(--tv-green-bg); }
+.negative-bg { background: var(--tv-red-bg); }
+
+/* ── 信号闪烁 (Finviz 风格) ── */
+@keyframes pulse-green {
+  0%, 100% { background: var(--tv-green-bg); }
+  50% { background: rgba(16, 185, 129, 0.24); }
+}
+.flash-green { animation: pulse-green 2s ease-in-out infinite; }
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  .panel-card:hover {
+    transform: none;
+  }
+}

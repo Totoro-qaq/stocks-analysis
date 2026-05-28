@@ -1,0 +1,99 @@
+# Environment and secrets
+.env
+.env.*
+!.env.example
+config/.env
+config/.env.*
+!config/.env.example
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual environments
+.venv/
+venv/
+ENV/
+env/
+
+# Tests, lint, and type checking
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+.tox/
+.nox/
+.hypothesis/
+.mypy_cache/
+.dmypy.json
+dmypy.json
+.ruff_cache/
+
+# Node / frontend
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/
+frontend/.cache/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Runtime output
+logs/
+.recordings/
+*.log
+celerybeat-schedule
+celerybeat.pid
+
+# Third-party market data and derived research outputs.
+# Keep these local because source-provider licenses may restrict redistribution.
+data/raw/*
+data/processed/*
+data/output/*
+!data/raw/.gitkeep
+!data/processed/.gitkeep
+!data/output/.gitkeep
+sina_crawler/
+frontend/public/demo/*.gif
+frontend/public/demo/*.mp4
+frontend/public/demo/*.webm
+docs/*答辩稿*
+docs/*presentation*
+docs/*report*
+*.docx
+*.pdf
+
+# Local tools
+.claude/
+.codex-logs/
+
+# Local backups
+*.codex-backup
+*.bak
+
+# IDE / OS
+.idea/
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json.example
+.DS_Store
+Thumbs.db
+desktop.ini

@@ -1,0 +1,169 @@
+﻿name: stocks
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: stocks_mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${STOCKS_MYSQL_PASSWORD:-${MYSQL_PASSWORD:-change_me}}
+      MYSQL_DATABASE: ${STOCKS_MYSQL_DATABASE:-us_stock_mvp}
+    ports:
+      - "${STOCKS_MYSQL_PORT:-13306}:3306"
+    volumes:
+      - stocks_mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - stocks-net
+
+  redis:
+    image: redis:7-alpine
+    container_name: stocks_redis
+    restart: unless-stopped
+    ports:
+      - "${STOCKS_REDIS_PORT:-16379}:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+    networks:
+      - stocks-net
+
+  jaeger:
+    image: jaegertracing/all-in-one:1.57
+    container_name: stocks_jaeger
+    restart: unless-stopped
+    environment:
+      - COLLECTOR_OTLP_ENABLED=true
+    ports:
+      - "${STOCKS_JAEGER_PORT:-16686}:16686"
+    networks:
+      - stocks-net
+
+  otel-collector:
+    image: otel/opentelemetry-collector-contrib:0.104.0
+    container_name: stocks_otel_collector
+    restart: unless-stopped
+    command: ["--config=/etc/otel-collector.yml"]
+    volumes:
+      - ./config/otel-collector.yml:/etc/otel-collector.yml:ro
+    ports:
+      - "${STOCKS_OTEL_GRPC_PORT:-14317}:4317"
+      - "${STOCKS_OTEL_HTTP_PORT:-14318}:4318"
+      - "${STOCKS_OTEL_PROM_PORT:-19464}:9464"
+    depends_on:
+      - jaeger
+    networks:
+      - stocks-net
+
+  prometheus:
+    image: prom/prometheus:v2.54.1
+    container_name: stocks_prometheus
+    restart: unless-stopped
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+      - "--storage.tsdb.path=/prometheus"
+      - "--web.enable-lifecycle"
+    volumes:
+      - ./config/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - stocks_prometheus_data:/prometheus
+    ports:
+      - "${STOCKS_PROMETHEUS_PORT:-19090}:9090"
+    depends_on:
+      - otel-collector
+    networks:
+      - stocks-net
+
+  backend:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    container_name: stocks_backend
+    restart: unless-stopped
+    ports:
+      - "${STOCKS_BACKEND_PORT:-18000}:8000"
+    environment:
+      - MYSQL_HOST=mysql
+      - MYSQL_PORT=3306
+      - MYSQL_USER=root
+      - MYSQL_PASSWORD=${STOCKS_MYSQL_PASSWORD:-${MYSQL_PASSWORD:-change_me}}
+      - MYSQL_DATABASE=${STOCKS_MYSQL_DATABASE:-us_stock_mvp}
+      - REDIS_URL=redis://redis:6379/0
+      - OTEL_ENABLED=${OTEL_ENABLED:-true}
+      - OTEL_SERVICE_NAME=stocks-backend
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://otel-collector:4317
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      otel-collector:
+        condition: service_started
+    volumes:
+      - ./src:/app/src
+      - ./data:/app/data
+      - ./config:/app/config
+      - ./backend:/app/backend
+    networks:
+      - stocks-net
+
+  celery-worker:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    container_name: stocks_worker
+    restart: unless-stopped
+    command: celery -A backend.celery_app worker --loglevel=info --concurrency=2
+    environment:
+      - MYSQL_HOST=mysql
+      - MYSQL_PORT=3306
+      - MYSQL_USER=root
+      - MYSQL_PASSWORD=${STOCKS_MYSQL_PASSWORD:-${MYSQL_PASSWORD:-change_me}}
+      - MYSQL_DATABASE=${STOCKS_MYSQL_DATABASE:-us_stock_mvp}
+      - REDIS_URL=redis://redis:6379/0
+      - OTEL_ENABLED=${OTEL_ENABLED:-true}
+      - OTEL_SERVICE_NAME=stocks-worker
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://otel-collector:4317
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      otel-collector:
+        condition: service_started
+    volumes:
+      - ./src:/app/src
+      - ./data:/app/data
+      - ./config:/app/config
+      - ./backend:/app/backend
+    networks:
+      - stocks-net
+
+  frontend:
+    build:
+      context: .
+      dockerfile: frontend/Dockerfile
+    container_name: stocks_frontend
+    restart: unless-stopped
+    ports:
+      - "${STOCKS_FRONTEND_PORT:-18080}:80"
+    depends_on:
+      - backend
+    networks:
+      - stocks-net
+
+volumes:
+  stocks_mysql_data:
+    name: stocks_mysql_data
+  stocks_prometheus_data:
+    name: stocks_prometheus_data
+
+networks:
+  stocks-net:
+    name: stocks-net
+
